@@ -127,7 +127,8 @@ public class ClassCodeGenerator {
                     typeName = typeName.box();
             } else
                 typeName = ClassName.get(paramType);
-            methodBuilder.beginControlFlow("if (rxBusContent.getContentType() == $T.HAS_DATA" + " && rxBusContent.getContent() instanceof $T)", RXBUSCONTENT_CONTENTTYPE, typeName)
+            System.out.print(typeName);
+            methodBuilder.beginControlFlow("if (rxBusContent.getContentType() == $T.HAS_DATA)", RXBUSCONTENT_CONTENTTYPE)
                     .addStatement("host." + binder.getMethodName() + "(rxBusContent.getContent())")
                     .endControlFlow();
         }
