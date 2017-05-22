@@ -61,12 +61,12 @@ class RxBusEvent<T> {
      */
     private void handleResult(RxBusContent<T> rxBusContent) {
         if (isSticky) {
-            Logger.i("Sticky RxBus 收到了消息 --> 宿主：" + host + "，标签：" + tag + "，内容：" + rxBusContent.getContent());
+            Logger.i("RxBus", "Sticky 收到了消息 --> 宿主：" + host + "，标签：" + tag + "，内容：" + rxBusContent.getContent());
         } else {
             if (rxBusContent.getContentType() == RxBusContent.ContentType.NO_DATA) {
-                Logger.i("RxBus 收到了消息 --> 宿主：" + host + "，标签：" + tag + "，没有内容");
+                Logger.i("RxBus", "收到了消息 --> 宿主：" + host + "，标签：" + tag + "，没有内容");
             } else if (rxBusContent.getContentType() == RxBusContent.ContentType.HAS_DATA) {
-                Logger.i("RxBus 收到了消息 --> 宿主：" + host + "，标签：" + tag + "，内容：" + rxBusContent.getContent());
+                Logger.i("RxBus", "收到了消息 --> 宿主：" + host + "，标签：" + tag + "，内容：" + rxBusContent.getContent());
             }
         }
         if (null != receivedListener) {

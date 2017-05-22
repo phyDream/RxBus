@@ -33,11 +33,10 @@ RxBus工具类。
     }
 ```
 
-2、如果需要改变打印日志等级，在`Application`中设置，默认是LogLevel.SIMPLE。
+2、是否打印日志。注意：设置这个标记，会影响所有用了Logger库的库。
 ```java
-    RxBus.setLogLevel(LogLevel.FULL);
-    RxBus.setLogLevel(LogLevel.SIMPLE);
-    RxBus.setLogLevel(LogLevel.NONE);
+    Logger.setDebugMode(true);
+    Logger.setDebugMode(false);
 ```
 
 3、在创建某个类的实例时调用`register(this)`方法进行注册宿主（通常在Activity的onCreate()方法中调用）。当在父类调用`register(this)`方法后，在子类无需再调用了，调用了也行，会自动防重复注册宿主。

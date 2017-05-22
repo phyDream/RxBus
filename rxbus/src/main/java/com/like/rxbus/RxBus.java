@@ -2,8 +2,6 @@ package com.like.rxbus;
 
 import android.support.annotation.NonNull;
 
-import com.like.logger.LogLevel;
-import com.like.logger.Logger;
 import com.like.rxbus.annotations.RxBusSubscribe;
 
 import io.reactivex.Scheduler;
@@ -27,14 +25,6 @@ import io.reactivex.Scheduler;
  * @created at 2017/4/4 19:32
  */
 public class RxBus {
-    static {
-        Logger.setTag("RxBus");
-        RxBus.setLogLevel(LogLevel.SIMPLE);
-    }
-
-    public static void setLogLevel(LogLevel logLevel) {
-        Logger.setLogLevel(logLevel);
-    }
 
     /**
      * 注册宿主如果父类中已经注册，那么子类中可以不用注册了

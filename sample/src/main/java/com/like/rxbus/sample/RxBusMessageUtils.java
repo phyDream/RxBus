@@ -16,7 +16,7 @@ public class RxBusMessageUtils {
     }
 
     public static void handleMessage(Object object, Object content) {
-        Logger.e(object + " 处理了消息，内容：" + content + " , 线程：" + Thread.currentThread().getName());
+        Logger.e("RxBus", object + " 处理了消息，内容：" + content + " , 线程：" + Thread.currentThread().getName());
     }
 
 }

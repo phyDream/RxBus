@@ -49,7 +49,7 @@ public class RxBusProxy<T> {
      */
     private void initAllHierarchyFromHost(T host, Class clazz) throws Exception {
         if (clazz != null) {
-            Logger.v("initAllHierarchyFromHost --> " + clazz);
+            Logger.v("RxBus", "initAllHierarchyFromHost --> " + clazz);
             // 查找代理类
             Class<?> proxyClass = null;
             try {

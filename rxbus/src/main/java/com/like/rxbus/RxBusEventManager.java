@@ -64,7 +64,7 @@ class RxBusEventManager<T> {
     synchronized void subscribe(RxBusEvent event) {
         // 同一个host，避免重复订阅某个tag
         if (eventList.contains(event)) {
-            Logger.e("宿主：" + event.getHost() + "，已经订阅过标签：" + event.getTag());
+            Logger.e("RxBus", "宿主：" + event.getHost() + "，已经订阅过标签：" + event.getTag());
             return;
         }
         // 获取某个标签对应的Subject，因为这个Subject和tag是一一对应的。
@@ -74,18 +74,18 @@ class RxBusEventManager<T> {
         if (event.isSticky()) {
             if (stickyMap.containsKey(event.getTag())) {
                 if (event.invoke())
-                    Logger.w("Sticky 订阅 宿主：" + event.getHost() + "，标签：" + event.getTag() + "，事件总数：" + getTagCount() + "，宿主总数：" + getHostCount());
+                    Logger.w("RxBus", "Sticky 订阅 宿主：" + event.getHost() + "，标签：" + event.getTag() + "，事件总数：" + getTagCount() + "，宿主总数：" + getHostCount());
                 else
-                    Logger.w("Sticky 订阅   宿主：" + event.getHost() + "，标签：" + event.getTag() + " 失败~~~~~~~~~~");
+                    Logger.w("RxBus", "Sticky 订阅   宿主：" + event.getHost() + "，标签：" + event.getTag() + " 失败~~~~~~~~~~");
 
                 postActual(event.getSubject(), event.getTag(), stickyMap.get(event.getTag()), true);
                 stickyMap.remove(event.getTag());
             }
         } else {
             if (event.invoke())
-                Logger.w("订阅 宿主：" + event.getHost() + "，标签：" + event.getTag() + "，事件总数：" + getTagCount() + "，宿主总数：" + getHostCount());
+                Logger.w("RxBus", "订阅 宿主：" + event.getHost() + "，标签：" + event.getTag() + "，事件总数：" + getTagCount() + "，宿主总数：" + getHostCount());
             else
-                Logger.w("订阅   宿主：" + event.getHost() + "，标签：" + event.getTag() + " 失败~~~~~~~~~~");
+                Logger.w("RxBus", "订阅   宿主：" + event.getHost() + "，标签：" + event.getTag() + " 失败~~~~~~~~~~");
         }
     }
 
@@ -107,9 +107,9 @@ class RxBusEventManager<T> {
         if (null != subject) {
             subject.onNext(rxBusContent);
             if (isSticky) {
-                Logger.d("Sticky RxBus 发送了消息 --> tag：" + tag + "，内容：" + rxBusContent.getContent());
+                Logger.d("RxBus", "Sticky 发送了消息 --> tag：" + tag + "，内容：" + rxBusContent.getContent());
             } else {
-                Logger.d("RxBus 发送了消息 --> tag：" + tag + "，内容：" + rxBusContent.getContent());
+                Logger.d("RxBus", "发送了消息 --> tag：" + tag + "，内容：" + rxBusContent.getContent());
             }
         }
     }
@@ -124,11 +124,11 @@ class RxBusEventManager<T> {
                 iterator.remove();
                 if (!event.getSubject().hasObservers()) {
                     stickyMap.remove(event.getTag());
-                    Logger.w("取消   事件：" + event.getTag() + "，剩余事件总数：" + getTagCount());
+                    Logger.w("RxBus", "取消   事件：" + event.getTag() + "，剩余事件总数：" + getTagCount());
                 }
             }
         }
-        Logger.w("取消 宿主：" + host + "，剩余宿主总数：" + getHostCount());
+        Logger.w("RxBus", "取消 宿主：" + host + "，剩余宿主总数：" + getHostCount());
     }
 
     synchronized void clear() {
