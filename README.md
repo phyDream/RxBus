@@ -142,6 +142,14 @@ RxBus工具类。
     public void test(String data) {
     }
 ```
+8、引用的库
+```java
+    compile rootProject.ext.deps.logger
+    compile rootProject.ext.deps.rxjava
+    compile rootProject.ext.deps.rxandroid
+    compile rootProject.ext.deps.javapoet
+    compile rootProject.ext.deps.auto_service
+```
 
 # License
 ```xml
