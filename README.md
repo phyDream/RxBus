@@ -30,7 +30,8 @@ RxBus工具类。
     dependencies {
         compile 'com.github.like5188:RxBus:1.0.0'
         annotationProcessor 'com.github.like5188.RxBus:rxbus-compiler:1.0.0'
-    }
+        kapt 'com.github.like5188.RxBus:rxbus-compiler:1.0.0'// 如果使用kotlin，就用这个。
+    }
 ```
 
 2、是否打印日志。注意：设置这个标记，会影响所有用了Logger库的库。
