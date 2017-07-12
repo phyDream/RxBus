@@ -144,11 +144,11 @@ RxBus工具类。
 ```
 8、引用的库
 ```java
-    compile rootProject.ext.deps.logger
-    compile rootProject.ext.deps.rxjava
-    compile rootProject.ext.deps.rxandroid
-    compile rootProject.ext.deps.javapoet
-    compile rootProject.ext.deps.auto_service
+    compile 'com.squareup:javapoet:1.8.0'
+    compile 'com.google.auto.service:auto-service:1.0-rc3'
+    compile 'io.reactivex.rxjava2:rxjava:2.0.8'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'com.github.like5188:Logger:1.0.3'
 ```
 
 # License

@@ -2,8 +2,8 @@ apply plugin: 'java'
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile rootProject.ext.deps.javapoet
-    compile rootProject.ext.deps.auto_service
+    compile 'com.squareup:javapoet:1.8.0'// 自动生成源码的库
+    compile 'com.google.auto.service:auto-service:1.0-rc3'// 自动生成注解处理器的库
     compile project(':rxbus-annotations')
 }
 
