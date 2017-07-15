@@ -83,7 +83,7 @@ public class ClassCodeGenerator {
     private MethodSpec createMethod() {
         MethodSpec.Builder builder = MethodSpec.methodBuilder("autoGenerate")
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(mTargetClassName, "host")
+                .addParameter(mTargetClassName, "host", Modifier.FINAL)
                 .addAnnotation(Override.class);
         for (MethodInfo binder : mMethodInfoList) {
             builder.addCode(createMethodCodeBlock(binder));
