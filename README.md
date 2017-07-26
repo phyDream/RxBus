@@ -28,8 +28,8 @@ RxBus工具类。
 在Module的gradle中加入：
 ```groovy
     dependencies {
-        compile 'com.github.like5188:RxBus:1.1.0'
-        annotationProcessor 'com.github.like5188.RxBus:rxbus-compiler:1.1.0'
+        compile 'com.github.like5188:RxBus:1.2.0'
+        annotationProcessor 'com.github.like5188.RxBus:rxbus-compiler:1.2.0'
     }
 ```
 
@@ -148,7 +148,7 @@ RxBus工具类。
     compile 'com.google.auto.service:auto-service:1.0-rc3'
     compile 'io.reactivex.rxjava2:rxjava:2.0.8'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'com.github.like5188:Logger:1.1.0'
+    compile 'com.github.like5188:Logger:1.2.0'
 ```
 
 # License
