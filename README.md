@@ -144,11 +144,7 @@ RxBus工具类。
 ```
 8、引用的库
 ```java
-    compile 'com.squareup:javapoet:1.8.0'
-    compile 'com.google.auto.service:auto-service:1.0-rc3'
-    compile 'io.reactivex.rxjava2:rxjava:2.0.8'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'com.github.like5188:Logger:1.2.0'
+    api 'io.reactivex.rxjava2:rxandroid:2.0.1'// 自动生成的代码中需要
 ```
 
 # License
