@@ -7,6 +7,7 @@ import com.like.logger.Logger;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.Subject;
 
 /*
@@ -52,7 +53,12 @@ class RxBusEvent<T> {
             return false;
         }
         // 发送的数据不为null时
-        disposable = subject.observeOn(scheduler).toFlowable(BackpressureStrategy.DROP).subscribe(this::handleResult);
+        disposable = subject.observeOn(scheduler).toFlowable(BackpressureStrategy.DROP).subscribe(new Consumer<RxBusContent<T>>() {
+            @Override
+            public void accept(RxBusContent<T> rxBusContent) throws Exception {
+                handleResult(rxBusContent);
+            }
+        });
         return true;
     }
 

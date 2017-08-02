@@ -90,7 +90,7 @@ class RxBusEventManager<T> {
     }
 
     synchronized void post(@NonNull String tag) {
-        postActual(getSubjectIfNullCreate(tag), tag, new RxBusContent<>(), false);
+        postActual(getSubjectIfNullCreate(tag), tag, new RxBusContent<T>(), false);
     }
 
     synchronized void post(@NonNull String tag, T content) {
