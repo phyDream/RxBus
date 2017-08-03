@@ -22,8 +22,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility rootProject.ext.sourceCompatibility
+        targetCompatibility rootProject.ext.targetCompatibility
     }
 }
 
@@ -40,7 +40,7 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.0.8'
 
     api 'io.reactivex.rxjava2:rxandroid:2.0.1'// 自动生成的代码中需要
-    api project(':rxbus-annotations')// 注解中需要
+    compile project(':rxbus-annotations')// 注解中需要
 }
 
 apply from: rootProject.file('./gradle-mvn-push.gradle')
