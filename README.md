@@ -149,7 +149,6 @@ RxBus工具类。
     compile 'io.reactivex.rxjava2:rxjava:2.0.8'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'// 自动生成的代码中需要
     compile project(':rxbus-annotations')// 注解中需要
-    compile 'com.github.like5188:Logger:1.3.0'
 ```
 
 # License

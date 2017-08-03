@@ -41,6 +41,7 @@ dependencies {
     implementation rootProject.ext.deps.kotlin
 
     implementation project(path: ':rxbus')
+
     implementation 'com.github.like5188:Logger:1.3.0'
 
     kapt 'com.android.databinding:compiler:2.3.3'
