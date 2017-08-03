@@ -28,8 +28,9 @@ RxBus工具类。
 在Module的gradle中加入：
 ```groovy
     dependencies {
-        implementation 'com.github.like5188:RxBus:1.3.0'
-        kapt 'com.github.like5188.RxBus:rxbus-compiler:1.3.0'
+        compile 'com.github.like5188:RxBus:1.3.1'
+        annotationProcessor 'com.github.like5188.RxBus:rxbus-compiler:1.3.1' // java
+        kapt 'com.github.like5188.RxBus:rxbus-compiler:1.3.1' // kotlin
     }
 ```
 
@@ -142,15 +143,6 @@ RxBus工具类。
     public void test(String data) {
     }
 ```
-8、引用的库
-```java
-    compile 'com.squareup:javapoet:1.8.0'// 自动生成源码的库
-    compile 'com.google.auto.service:auto-service:1.0-rc3'// 自动生成注解处理器的库
-    compile 'io.reactivex.rxjava2:rxjava:2.0.8'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'// 自动生成的代码中需要
-    compile project(':rxbus-annotations')// 注解中需要
-```
-
 # License
 ```xml
     Copyright 2017 like5188
