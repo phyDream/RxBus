@@ -28,8 +28,8 @@ RxBus工具类。
 在Module的gradle中加入：
 ```groovy
     dependencies {
-        implementation 'com.github.like5188:RxBus:1.2.4'
-        kapt 'com.github.like5188.RxBus:rxbus-compiler:1.2.4'
+        implementation 'com.github.like5188:RxBus:1.2.5'
+        kapt 'com.github.like5188.RxBus:rxbus-compiler:1.2.5'
     }
 ```
 
