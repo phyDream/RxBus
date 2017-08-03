@@ -29,19 +29,17 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestImplementation 'com.android.support.test:runner:0.5'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2'
-
-    implementation rootProject.ext.deps.appcompat_v7
+    androidTestImplementation rootProject.ext.deps.test
+    androidTestImplementation rootProject.ext.deps.espresso
     testImplementation rootProject.ext.deps.junit
+    implementation rootProject.ext.deps.appcompat_v7
+    implementation rootProject.ext.deps.constraint
+    implementation rootProject.ext.deps.kotlin
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-
-    implementation 'com.github.like5188:Logger:1.2.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.0.8'
-
+    compile 'io.reactivex.rxjava2:rxjava:2.0.8'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'// 自动生成的代码中需要
     compile project(':rxbus-annotations')// 注解中需要
+    compile 'com.github.like5188:Logger:1.3.0'
 }
 
 apply from: rootProject.file('./gradle-mvn-push.gradle')
