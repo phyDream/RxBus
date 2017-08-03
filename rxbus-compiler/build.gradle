@@ -2,7 +2,7 @@ apply plugin: 'java'
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.squareup:javapoet:1.8.0'// 自动生成源码的库
+    implementation 'com.squareup:javapoet:1.8.0'// 自动生成源码的库
     compile 'com.google.auto.service:auto-service:1.0-rc3'// 自动生成注解处理器的库
     compile project(':rxbus-annotations')
 }
