@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.View;
 
+import com.like.rxbus.RxBus;
 import com.like.rxbus.annotations.RxBusSubscribe;
 import com.like.rxbus.annotations.RxBusThread;
 
@@ -22,6 +23,11 @@ public class RxBusActivity extends BaseRxBusActivity {
 
     public void clickSticky(View view) {
         startActivity(new Intent(this, RxBusStickyActivity.class));
+    }
+
+    public void clickSticky111(View view) {
+        RxBus.postSticky("stick", 111);
+        startActivity(new Intent(this, StickyActivity.class));
     }
 
     @RxBusSubscribe("RxBusActivity1")

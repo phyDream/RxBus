@@ -20,6 +20,13 @@
             android:onClick="clickSticky"
             android:text="启动另一个Activity订阅Sticky事件" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="clickSticky111"
+            android:text="Sticky事件和firstGetData()方法先后顺序对比" />
+
     </LinearLayout>
 
 
