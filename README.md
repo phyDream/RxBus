@@ -4,7 +4,7 @@ RxBus工具类。
 
 1、该项目基于[RxJava2](https://github.com/ReactiveX/RxJava) & [RxAndroid](https://github.com/ReactiveX/RxAndroid)。
 
-2、通过`@RxBusSubscribe`注解方法来接收消息，其中可以设置标签组、线程、Sticky标记。
+2、通过`@RxBusSubscribe`注解方法来接收消息，其中可以设置标签组、线程（默认接收消息在主线程）、Sticky标记。
 
 3、可以发送普通消息和Sticky消息。
 
