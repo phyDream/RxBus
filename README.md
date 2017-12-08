@@ -69,6 +69,11 @@ RxBus工具类。
     @RxBusSubscribe()
     public void test() {
     }
+    
+    // kotlin
+    @RxBusSubscribe()
+    fun test() {
+    }
 ```
 ```java
     默认标签，有参
