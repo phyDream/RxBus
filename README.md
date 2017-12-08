@@ -8,7 +8,7 @@ RxBus工具类。
 
 3、可以发送普通消息和Sticky消息。
 
-4、自动防重复注册宿主、自动防重复注册标签（及同一个宿主下的标签不重复，如果重复了，只有第一次有效。）。
+4、自动防重复注册宿主（这里指任何一个类）、自动防重复注册标签（及同一个宿主下的标签不重复，如果重复了，只有第一次有效。）。
 
 5、支持背压，采用的策略是BackpressureStrategy.DROP。
 
@@ -34,12 +34,12 @@ RxBus工具类。
     }
 ```
 
-2、在创建某个类的实例时调用`register(this)`方法进行注册宿主（通常在Activity的onCreate()方法中调用）。当在父类调用`register(this)`方法后，在子类无需再调用了，调用了也行，会自动防重复注册宿主。
+2、在需要接收消息的类的初始化方法（通常为构造函数）中调用`register(this)`方法进行注册宿主（通常在Activity的onCreate()方法中调用，也可以是其它任何类）。当在父类调用`register(this)`方法后，在子类无需再调用了，调用了也行，会自动防重复注册宿主。
 ```java
     RxBus.register(this);
 ```
 
-3、在销毁某个类的实例时调用`unregister(this)`方法进行取消注册宿主（通常在Activity的onDestroy()方法中调用）。
+3、在销毁宿主的实例时调用`unregister(this)`方法进行取消注册宿主（通常在Activity的onDestroy()方法中调用）。
 ```java
     RxBus.unregister(this);
 ```
@@ -52,13 +52,13 @@ RxBus工具类。
     RxBus.postByTag("tag");
 ```
 
-5、发送Sticky消息使用`postSticky()`方法，注意Sticky消息在第一次接收后，就会销毁，以后就和普通消息一样了。和发送普通消息相比，发送Sticky消息，实际上就是延迟了第一次接收消息的时间。
+5、发送Sticky消息使用`postSticky()`方法，注意Sticky消息在第一次接收后，就和普通消息一样了。和发送普通消息相比，实际上就是延迟了第一次接收消息的时间（用来替代Intent传递数据）。
 ```java
     RxBus.postSticky(object);
     RxBus.postSticky("tag", object);
 ```
 
-6、接收消息和发送消息是一一对应的。使用`@RxBusSubscribe`注解一个方法，被注解的方法的参数最多只能是1个。只能被public修饰，且不能被static修饰(即被public void修饰)。其中可以设置标签组、线程(`RxBusThread`)、Sticky标记。
+6、接收消息和发送消息是一一对应的。使用`@RxBusSubscribe`注解一个方法，被注解的方法的参数最多只能是1个。只能被public修饰，且不能被static修饰(即只能使用public void修饰)。其中可以设置标签组、线程(`RxBusThread`)、Sticky标记。
 ```java
     默认标签，无参
     
