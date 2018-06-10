@@ -21,12 +21,6 @@ class MyApplication : BaseApplication(), IRetrofitApplication {
         RxBus.unregister(this)
     }
 
-    override val retrofitAppComponent: RetrofitAppComponent by lazy {
-        getComponent()
-    }
-
-    override fun getApplication() = this
-
     override fun getScheme() = RetrofitUtils.SCHEME_HTTP // 默认是RetrofitUtils.SCHEME_HTTP
 
     // "172.16.103.14",   8081 蒋晓龙本地测试服务器
