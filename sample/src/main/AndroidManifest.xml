@@ -3,7 +3,6 @@
     package="com.like.rxbus.sample">
 
     <application
-        android:name="com.copticomm.jujiahe.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -19,7 +18,6 @@
         </activity>
 
         <activity android:name=".RxBusStickyActivity" />
-        <activity android:name=".StickyActivity" />
     </application>
 
 </manifest>
