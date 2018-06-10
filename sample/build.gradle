@@ -1,11 +1,9 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.2"
 
     defaultConfig {
         applicationId 'com.like.rxbus.sample'
@@ -44,7 +42,6 @@ dependencies {
     kapt 'com.android.databinding:compiler:2.3.3'
 
     compile 'com.github.like5188:Common:2.0.8'
-    compile 'com.github.like5188:Logger:2.0.0'
     compile 'com.github.like5188:Base:2.0.2'
     compile 'com.github.like5188:RecyclerView:2.0.6'
 
