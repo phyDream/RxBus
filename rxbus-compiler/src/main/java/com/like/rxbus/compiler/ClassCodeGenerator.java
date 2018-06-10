@@ -57,7 +57,7 @@ public class ClassCodeGenerator {
         }
         // 生成 com.example.Xxx.java
         JavaFile javaFile = JavaFile.builder(mPackageName, createClass())
-                .addFileComment(" This codes are generated automatically. Do not modify!")// 类的注释
+                .addFileComment(" This codes are generated automatically by RxBus. Do not modify!")// 类的注释
                 .build();
         try {
             javaFile.writeTo(ProcessUtils.filer);
@@ -95,11 +95,13 @@ public class ClassCodeGenerator {
         CodeBlock.Builder builder = CodeBlock.builder();
         Set<String> tags = methodInfo.getTags();
         for (String tag : tags) {
+            String activityOrFragment = methodInfo.getActivityOrFragment();
+            String code = methodInfo.getCode();
             ClassName thread = getRxThreadClassName(methodInfo.getThread());
             boolean isSticky = methodInfo.isSticky();
 
             CodeBlock.Builder b = CodeBlock.builder();
-            b.addStatement("subscribe(host\n,$S\n,$T()\n,$L\n,$L)", tag, thread, isSticky, createListenerParam(methodInfo));
+            b.addStatement("subscribe(host\n,$S\n,$S\n,$S\n,$T()\n,$L\n,$L)", activityOrFragment, code, tag, thread, isSticky, createListenerParam(methodInfo));
             builder.add(b.build());
         }
         return builder.build();
@@ -108,17 +110,17 @@ public class ClassCodeGenerator {
     /**
      * 创建第四个Listener参数，是一个匿名内部类。
      */
-    private TypeSpec createListenerParam(MethodInfo binder) {
+    private TypeSpec createListenerParam(MethodInfo methodInfo) {
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("onReceive")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC);
 
-        TypeMirror paramType = binder.getParamTypes();
+        TypeMirror paramType = methodInfo.getParamType();
         TypeName typeName;
         if (paramType == null) {
             typeName = ClassName.get("java.lang", "Object");
             methodBuilder.beginControlFlow("if (rxBusContent.getContentType() == $T.NO_DATA)", RXBUSCONTENT_CONTENTTYPE)
-                    .addStatement("host." + binder.getMethodName() + "()")
+                    .addStatement("host." + methodInfo.getMethodName() + "()")
                     .endControlFlow();
         } else {
             if (paramType.getKind().isPrimitive()) {
@@ -129,7 +131,7 @@ public class ClassCodeGenerator {
                 typeName = ClassName.get(paramType);
             System.out.print(typeName);
             methodBuilder.beginControlFlow("if (rxBusContent.getContentType() == $T.HAS_DATA)", RXBUSCONTENT_CONTENTTYPE)
-                    .addStatement("host." + binder.getMethodName() + "(rxBusContent.getContent())")
+                    .addStatement("host." + methodInfo.getMethodName() + "(rxBusContent.getContent())")
                     .endControlFlow();
         }
         methodBuilder.addParameter(ParameterizedTypeName.get(RXBUSCONTENT, typeName), "rxBusContent");
@@ -142,15 +144,17 @@ public class ClassCodeGenerator {
 
     public void addElement(Element element) {
         if (mTargetClassName == null) {
-            mTargetClassName = ClassName.get((TypeElement) element.getEnclosingElement());
+            mTargetClassName = ClassName.get((TypeElement) element.getEnclosingElement());// getEnclosingElement()所在类的对象信息
             mPackageName = mTargetClassName.packageName();
         }
 
         MethodInfo methodInfo = new MethodInfo();
         methodInfo.setMethodName(element.getSimpleName().toString());
 
-        methodInfo.setTags(element.getAnnotation(RxBusSubscribe.class).value());
+        methodInfo.setTags(element.getAnnotation(RxBusSubscribe.class).tags());
         methodInfo.setSticky(element.getAnnotation(RxBusSubscribe.class).isSticky());
+        methodInfo.setActivityOrFragment(element.getAnnotation(RxBusSubscribe.class).activityOrFragment());
+        methodInfo.setCode(element.getAnnotation(RxBusSubscribe.class).code());
         methodInfo.setThread(element.getAnnotation(RxBusSubscribe.class).thread());
 
         ExecutableElement executableElement = (ExecutableElement) element;

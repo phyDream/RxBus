@@ -9,64 +9,84 @@ import java.util.Set;
 import javax.lang.model.type.TypeMirror;
 
 final class MethodInfo {
-    private String mMethodName;
-    private Set<String> mTags;
-    private RxBusThread mThread;
+    private String methodName;
+    private Set<String> tags;
+    private RxBusThread thread;
     private boolean isSticky;
-    private TypeMirror mParamType;
+    private String activityOrFragment;
+    private String code;
+    private TypeMirror paramType;
 
     public MethodInfo() {
-        mTags = new LinkedHashSet<>();
-    }
-
-    public void setMethodName(String name) {
-        mMethodName = name;
+        tags = new LinkedHashSet<>();
     }
 
     public String getMethodName() {
-        return mMethodName;
-    }
-
-    public void setThread(RxBusThread thread) {
-        mThread = thread;
-    }
-
-    public RxBusThread getThread() {
-        return mThread;
-    }
-
-    public void setTags(String[] tags) {
-        mTags.addAll(Arrays.asList(tags));
+        return methodName;
     }
 
     public Set<String> getTags() {
-        return mTags;
+        return tags;
     }
 
-    public void setParamType(TypeMirror typeMirror) {
-        mParamType = typeMirror;
-    }
-
-    public TypeMirror getParamTypes() {
-        return mParamType;
+    public RxBusThread getThread() {
+        return thread;
     }
 
     public boolean isSticky() {
         return isSticky;
     }
 
+    public String getActivityOrFragment() {
+        return activityOrFragment;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public TypeMirror getParamType() {
+        return paramType;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags.addAll(Arrays.asList(tags));
+    }
+
+    public void setThread(RxBusThread thread) {
+        this.thread = thread;
+    }
+
     public void setSticky(boolean sticky) {
         isSticky = sticky;
+    }
+
+    public void setActivityOrFragment(String activityOrFragment) {
+        this.activityOrFragment = activityOrFragment;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setParamType(TypeMirror paramType) {
+        this.paramType = paramType;
     }
 
     @Override
     public String toString() {
         return "MethodInfo{" +
-                "mMethodName='" + mMethodName + '\'' +
-                ", mTags=" + mTags +
-                ", mThread=" + mThread +
-                ", mParamType=" + mParamType +
+                "methodName='" + methodName + '\'' +
+                ", tags=" + tags +
+                ", thread=" + thread +
                 ", isSticky=" + isSticky +
+                ", activityOrFragment=" + activityOrFragment +
+                ", code='" + code + '\'' +
+                ", paramType=" + paramType +
                 '}';
     }
 }

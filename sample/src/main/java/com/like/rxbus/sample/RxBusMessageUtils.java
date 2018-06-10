@@ -5,14 +5,13 @@ import com.like.rxbus.RxBus;
 
 public class RxBusMessageUtils {
     public static void post() {
-        RxBus.post();
-        RxBus.post("123");
-        RxBus.postByTag("RxBusActivity1");
-        RxBus.post("RxBusActivity2", 123);
+        RxBus.post("BaseRxBusActivity");
+        RxBus.post("RxBusActivity1", "1", "1111111111111111");
+        RxBus.post("RxBusActivity1", "2", "2222222222222");
+        RxBus.post("RxBusActivity2", 2);
         RxBus.post("RxBusActivity3", null);
-        RxBus.post("RxBusActivity_extra", "content-RxBusActivity_extra");
-        RxBus.postSticky("RxBusStickyActivity", "123");
-        RxBus.postSticky(1);
+        RxBus.postSticky("RxBusStickyActivity1", 111);
+        RxBus.postSticky("RxBusStickyActivity2", "3", 222.99);
     }
 
     public static void handleMessage(Object object, Object content) {

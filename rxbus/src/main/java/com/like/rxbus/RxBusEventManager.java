@@ -3,6 +3,12 @@ package com.like.rxbus;
 import android.support.annotation.NonNull;
 
 import com.like.logger.Logger;
+import com.like.rxbus.annotations.RxBusSubscribe;
+import com.trello.rxlifecycle2.LifecycleTransformer;
+import com.trello.rxlifecycle2.android.ActivityEvent;
+import com.trello.rxlifecycle2.android.FragmentEvent;
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
+import com.trello.rxlifecycle2.components.support.RxFragment;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,7 +30,7 @@ import io.reactivex.subjects.Subject;
 class RxBusEventManager<T> {
     private List<RxBusEvent<T>> eventList;
     /**
-     * sticky事件缓存，key为tag，value为内容
+     * sticky事件缓存，key为"tag;code"，value为内容
      */
     private ConcurrentMap<String, RxBusContent<T>> stickyMap;
 
@@ -55,6 +61,7 @@ class RxBusEventManager<T> {
     synchronized boolean isRegisteredHost(@NonNull Object host) {
         for (RxBusEvent event : eventList) {
             if (host.equals(event.getHost())) {
+                Logger.e(RxBus.TAG, "已经注册过宿主：" + event.getHost());
                 return true;
             }
         }
@@ -64,52 +71,57 @@ class RxBusEventManager<T> {
     synchronized void subscribe(RxBusEvent event) {
         // 同一个host，避免重复订阅某个tag
         if (eventList.contains(event)) {
-            Logger.e("RxBus", "宿主：" + event.getHost() + "，已经订阅过标签：" + event.getTag());
+            Logger.e(RxBus.TAG, "已经订阅过事件：" + event.toString());
             return;
         }
         // 获取某个标签对应的Subject，因为这个Subject和tag是一一对应的。
-        event.setSubject(getSubjectIfNullCreate(event.getTag()));
-        eventList.add(event);
+        event.setSubject(getSubjectIfNullCreate(event.getTag(), event.getCode()));
 
         if (event.isSticky()) {
-            if (stickyMap.containsKey(event.getTag())) {
-                if (event.invoke())
-                    Logger.w("RxBus", "Sticky 订阅 宿主：" + event.getHost() + "，标签：" + event.getTag() + "，事件总数：" + getTagCount() + "，宿主总数：" + getHostCount());
-                else
-                    Logger.w("RxBus", "Sticky 订阅   宿主：" + event.getHost() + "，标签：" + event.getTag() + " 失败~~~~~~~~~~");
-
-                postActual(event.getSubject(), event.getTag(), stickyMap.get(event.getTag()), true);
-                stickyMap.remove(event.getTag());
+            String mapKey = event.getTag() + ";" + event.getCode();
+            if (stickyMap.containsKey(mapKey)) {
+                event.invoke();
+                postActual(event.getSubject(), event.getTag(), event.getCode(), stickyMap.get(mapKey), true);
+                stickyMap.remove(mapKey);
             }
         } else {
-            if (event.invoke())
-                Logger.w("RxBus", "订阅 宿主：" + event.getHost() + "，标签：" + event.getTag() + "，事件总数：" + getTagCount() + "，宿主总数：" + getHostCount());
-            else
-                Logger.w("RxBus", "订阅   宿主：" + event.getHost() + "，标签：" + event.getTag() + " 失败~~~~~~~~~~");
+            if (event.invoke()) {
+                eventList.add(event);
+                Logger.i(RxBus.TAG, "订阅事件成功：" + event + "，事件总数：" + getEventCount() + " ，宿主总数：" + getHostCount());
+            } else {
+                Logger.e(RxBus.TAG, "订阅事件失败：" + event);
+            }
         }
     }
 
     synchronized void post(@NonNull String tag) {
-        postActual(getSubjectIfNullCreate(tag), tag, new RxBusContent<T>(), false);
+        postActual(getSubjectIfNullCreate(tag, RxBusSubscribe.DEFAULT_CODE), tag, RxBusSubscribe.DEFAULT_CODE, new RxBusContent<>(), false);
     }
 
     synchronized void post(@NonNull String tag, T content) {
-        postActual(getSubjectIfNullCreate(tag), tag, new RxBusContent<>(content), false);
+        post(tag, RxBusSubscribe.DEFAULT_CODE, content);
+    }
+
+    synchronized void post(@NonNull String tag, @NonNull String code, T content) {
+        postActual(getSubjectIfNullCreate(tag, code), tag, code, new RxBusContent<>(content), false);
     }
 
     synchronized void postSticky(@NonNull String tag, T content) {
-        RxBusContent<T> rxBusContent = new RxBusContent<>(content);
-        stickyMap.put(tag, rxBusContent);
-        postActual(getSubjectIfNullCreate(tag), tag, rxBusContent, true);
+        postSticky(tag, RxBusSubscribe.DEFAULT_CODE, content);
     }
 
-    private synchronized void postActual(Subject<RxBusContent<T>> subject, @NonNull String tag, RxBusContent<T> rxBusContent, boolean isSticky) {
+    synchronized void postSticky(@NonNull String tag, @NonNull String code, T content) {
+        RxBusContent<T> rxBusContent = new RxBusContent<>(content);
+        stickyMap.put(tag + ";" + code, rxBusContent);
+    }
+
+    private synchronized void postActual(Subject<RxBusContent<T>> subject, @NonNull String tag, @NonNull String code, RxBusContent<T> rxBusContent, boolean isSticky) {
         if (null != subject) {
             subject.onNext(rxBusContent);
             if (isSticky) {
-                Logger.d("RxBus", "Sticky 发送了消息 --> tag：" + tag + "，内容：" + rxBusContent.getContent());
+                Logger.v(RxBus.TAG, "发送了粘性消息 --> tag = " + tag + " code = " + code + " " + rxBusContent.getContent());
             } else {
-                Logger.d("RxBus", "发送了消息 --> tag：" + tag + "，内容：" + rxBusContent.getContent());
+                Logger.d(RxBus.TAG, "发送了消息 --> tag = " + tag + " code = " + code + " " + rxBusContent.getContent());
             }
         }
     }
@@ -122,33 +134,22 @@ class RxBusEventManager<T> {
             if (event.getHost().equals(host)) {
                 event.dispose();
                 iterator.remove();
-                if (!event.getSubject().hasObservers()) {
-                    stickyMap.remove(event.getTag());
-                    Logger.w("RxBus", "取消   事件：" + event.getTag() + "，剩余事件总数：" + getTagCount());
-                }
+                Logger.i(RxBus.TAG, "取消事件：" + event + "，剩余事件总数：" + getEventCount());
             }
         }
-        Logger.w("RxBus", "取消 宿主：" + host + "，剩余宿主总数：" + getHostCount());
-    }
 
-    synchronized void clear() {
-        for (RxBusEvent event : eventList) {
-            event.dispose();
-        }
-        stickyMap.clear();
-        eventList.clear();
+        stickyMap.clear();// 每一次销毁，都清空粘性事件。
+
+        Logger.i(RxBus.TAG, "取消宿主：" + host + "，剩余宿主总数：" + getHostCount());
     }
 
     /**
-     * 因为一个tag对应一个subject，所以如果存在，就不需要创建了。
-     *
-     * @param tag
-     * @return
+     * 因为一个event对应一个subject，所以如果存在，就不需要创建。如果不存在，就创建一个
      */
-    private synchronized Subject<RxBusContent<T>> getSubjectIfNullCreate(@NonNull String tag) {
+    private synchronized Subject<RxBusContent<T>> getSubjectIfNullCreate(@NonNull String tag, @NonNull String code) {
         Subject<RxBusContent<T>> subject = null;
         for (RxBusEvent event : eventList) {
-            if (tag.equals(event.getTag())) {
+            if (tag.equals(event.getTag()) && code.equals(event.getCode())) {
                 subject = event.getSubject();
                 break;
             }
@@ -161,6 +162,9 @@ class RxBusEventManager<T> {
         return subject;
     }
 
+    /**
+     * 注册的宿主总数
+     */
     private synchronized int getHostCount() {
         HashSet<Object> set = new HashSet<>();
         for (RxBusEvent event : eventList) {
@@ -169,12 +173,26 @@ class RxBusEventManager<T> {
         return set.size();
     }
 
-    private synchronized int getTagCount() {
-        HashSet<String> set = new HashSet<>();
+    /**
+     * 注册的事件总数
+     */
+    private synchronized int getEventCount() {
+        HashSet<RxBusEvent> set = new HashSet<>();
         for (RxBusEvent event : eventList) {
-            set.add(event.getTag());
+            set.add(event);
         }
         return set.size();
     }
 
+//    /**
+//     * 绑定onDestroy()方法
+//     */
+//    public LifecycleTransformer<T> bindDestroyEvent() {
+//        if (host instanceof RxAppCompatActivity) {
+//            return ((RxAppCompatActivity) host).bindUntilEvent(ActivityEvent.DESTROY);
+//        } else if (host instanceof RxFragment) {
+//            return ((RxFragment) host).bindUntilEvent(FragmentEvent.DESTROY);
+//        }
+//        return null;
+//    }
 }

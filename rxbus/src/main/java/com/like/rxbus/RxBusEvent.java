@@ -26,24 +26,32 @@ import io.reactivex.subjects.Subject;
  * @param <T>
  */
 class RxBusEvent<T> {
-    private String tag;
     private Object host;
+    private String tag;
+    private String code;
+    private String activityOrFragment;
     private Scheduler scheduler;
     private Disposable disposable;
     private RxBus.OnReceivedListener<T> receivedListener;
     private Subject<RxBusContent<T>> subject;
     private boolean isSticky;
 
-    public RxBusEvent(@NonNull Object host, @NonNull String tag, @NonNull Scheduler scheduler, boolean isSticky, RxBus.OnReceivedListener<T> receivedListener) {
+    public RxBusEvent(@NonNull Object host, @NonNull String activityOrFragment, @NonNull String code, @NonNull String tag, @NonNull Scheduler scheduler, boolean isSticky, RxBus.OnReceivedListener<T> receivedListener) {
         this.host = host;
+        this.activityOrFragment = activityOrFragment;
         this.tag = tag;
+        this.code = code;
         this.scheduler = scheduler;
         this.isSticky = isSticky;
         this.receivedListener = receivedListener;
     }
 
+    public RxBusEvent<T> getDefault() {
+        return null;
+    }
+
     /**
-     * 执行订阅
+     * 执行订阅，订阅后就能接收消息了。
      *
      * @return 是否订阅成功
      */
@@ -52,55 +60,49 @@ class RxBusEvent<T> {
             disposable = null;
             return false;
         }
-        // 发送的数据不为null时
+//        observable.compose(RxSchedulers.observableIo2Main<T>())
+//                .compose(RxSchedulers.destroy<T>(host))
+//                .subscribe(observer)
+
+        final RxBusEvent event = this;
         disposable = subject.observeOn(scheduler).toFlowable(BackpressureStrategy.DROP).subscribe(new Consumer<RxBusContent<T>>() {
             @Override
             public void accept(RxBusContent<T> rxBusContent) throws Exception {
-                handleResult(rxBusContent);
+                // 处理接收到的数据
+                if (isSticky) {
+                    Logger.i(RxBus.TAG, "收到了粘性消息 --> 事件：" + event + "，内容：" + rxBusContent.getContent());
+                } else {
+                    if (rxBusContent.getContentType() == RxBusContent.ContentType.NO_DATA) {
+                        Logger.i(RxBus.TAG, "收到了消息 --> 事件：" + event + "，没有内容");
+                    } else if (rxBusContent.getContentType() == RxBusContent.ContentType.HAS_DATA) {
+                        Logger.i(RxBus.TAG, "收到了消息 --> 事件：" + event + "，内容：" + rxBusContent.getContent());
+                    }
+                }
+                if (null != receivedListener) {
+                    try {
+                        receivedListener.onReceive(rxBusContent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
         return true;
     }
 
-    /**
-     * 处理接收到的数据
-     */
-    private void handleResult(RxBusContent<T> rxBusContent) {
-        if (isSticky) {
-            Logger.i("RxBus", "Sticky 收到了消息 --> 宿主：" + host + "，标签：" + tag + "，内容：" + rxBusContent.getContent());
-        } else {
-            if (rxBusContent.getContentType() == RxBusContent.ContentType.NO_DATA) {
-                Logger.i("RxBus", "收到了消息 --> 宿主：" + host + "，标签：" + tag + "，没有内容");
-            } else if (rxBusContent.getContentType() == RxBusContent.ContentType.HAS_DATA) {
-                Logger.i("RxBus", "收到了消息 --> 宿主：" + host + "，标签：" + tag + "，内容：" + rxBusContent.getContent());
-            }
-        }
-        if (null != receivedListener) {
-            try {
-                receivedListener.onReceive(rxBusContent);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    @Override
+    public String toString() {
+        return "RxBusEvent{" +
+                "host=" + host +
+                ", tag='" + tag + '\'' +
+                ", code='" + code + '\'' +
+                ", isSticky=" + isSticky +
+                '}';
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-
-        RxBusEvent<?> that = (RxBusEvent<?>) object;
-
-        if (tag != null ? !tag.equals(that.tag) : that.tag != null) return false;
-        return host != null ? host.equals(that.host) : that.host == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = tag != null ? tag.hashCode() : 0;
-        result = 31 * result + (host != null ? host.hashCode() : 0);
-        return result;
+    // 此事件是否还有观察者
+    public boolean hasObservers() {
+        return subject.hasObservers();
     }
 
     public String getTag() {
@@ -109,6 +111,14 @@ class RxBusEvent<T> {
 
     public Object getHost() {
         return host;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getActivityOrFragment() {
+        return activityOrFragment;
     }
 
     public Subject<RxBusContent<T>> getSubject() {
@@ -129,4 +139,23 @@ class RxBusEvent<T> {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RxBusEvent<?> that = (RxBusEvent<?>) o;
+
+        if (host != null ? !host.equals(that.host) : that.host != null) return false;
+        if (tag != null ? !tag.equals(that.tag) : that.tag != null) return false;
+        return code != null ? code.equals(that.code) : that.code == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = host != null ? host.hashCode() : 0;
+        result = 31 * result + (tag != null ? tag.hashCode() : 0);
+        result = 31 * result + (code != null ? code.hashCode() : 0);
+        return result;
+    }
 }

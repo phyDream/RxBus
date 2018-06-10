@@ -14,6 +14,9 @@ import static javax.lang.model.element.ElementKind.METHOD;
 import static javax.lang.model.element.Modifier.PUBLIC;
 import static javax.lang.model.element.Modifier.STATIC;
 
+/**
+ * 用于验证目标类及方法的正确性
+ */
 public class ProcessUtils {
     public static Types typeUtils;// 用来处理TypeMirror的工具
     public static Elements elementUtils;// 用来处理Element的工具

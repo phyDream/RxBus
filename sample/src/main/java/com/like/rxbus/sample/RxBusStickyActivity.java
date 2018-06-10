@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.like.rxbus.RxBus;
 import com.like.rxbus.annotations.RxBusSubscribe;
+import com.like.rxbus.annotations.RxBusThread;
 
 /**
  * Created by like on 2017/4/5.
@@ -32,13 +33,18 @@ public class RxBusStickyActivity extends AppCompatActivity {
         RxBusMessageUtils.post();
     }
 
-    @RxBusSubscribe(value = "RxBusStickyActivity", isSticky = true)
-    public void test(String data) {
+    @RxBusSubscribe(tags = "RxBusStickyActivity1", isSticky = true)
+    public void test(int data) {
         RxBusMessageUtils.handleMessage(this, data);
     }
 
-    @RxBusSubscribe(isSticky = true)
-    public void test(int data) {
+    @RxBusSubscribe(tags = "RxBusStickyActivity2", code = "3", isSticky = true)
+    public void test(Double data) {
+        RxBusMessageUtils.handleMessage(this, data);
+    }
+
+    @RxBusSubscribe(tags = "RxBusActivity1", code = "2")
+    public void test(String data) {
         RxBusMessageUtils.handleMessage(this, data);
     }
 }

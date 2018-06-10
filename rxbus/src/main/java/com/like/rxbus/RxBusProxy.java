@@ -18,16 +18,19 @@ public class RxBusProxy<T> {
     /**
      * 由自动生成的代码里面调用。因为参数都是从注解中传递来的。
      *
-     * @param tag
+     * @param host               订阅函数所在的类
+     * @param activityOrFragment 订阅函数所在的类对应的Activity或者Fragment
+     * @param code               事件的参数，类似于requestCode
+     * @param tag                事件的标签
      * @param scheduler
      * @param listener
      * @param <V>
      */
-    public <V> void subscribe(T host, String tag, Scheduler scheduler, boolean isSticky, RxBus.OnReceivedListener<V> listener) {
+    public <V> void subscribe(T host, String activityOrFragment, String code, String tag, Scheduler scheduler, boolean isSticky, RxBus.OnReceivedListener<V> listener) {
         if (host == null || TextUtils.isEmpty(tag)) {
             return;
         }
-        RxBus.subscribe(host, tag, scheduler, isSticky, listener);
+        RxBus.subscribe(host, activityOrFragment, code, tag, scheduler, isSticky, listener);
     }
 
     public void init(T host) {

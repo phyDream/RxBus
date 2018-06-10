@@ -12,22 +12,21 @@ import io.reactivex.Scheduler;
  * 支持背压，采用的策略是BackpressureStrategy.DROP。<br/>
  * <p>
  * 使用方法：<br/>
- * 1、在创建某个类的实例时调用register(this)方法进行注册宿主（通常在Activity的onCreate()方法中调用）。
- * 当在父类调用register(this)方法后，在子类无需再调用了，调用了也行，会自动防重复注册宿主。<br/>
- * 2、在销毁某个类的实例时调用unregister(this)方法进行取消注册宿主（通常在Activity的onDestroy()方法中调用）。<br/>
- * 3、发送普通消息可以使用post()、postByTag()方法。
- * 发送Sticky消息使用postSticky()方法，注意Sticky消息在第一次接收后，就会销毁，以后就和普通消息一样了。
- * 和发送普通消息相比，发送Sticky消息，实际上就是延迟了第一次接收消息的时间。<br/>
- * 4、接收消息使用{@link RxBusSubscribe}注解一个方法，其中可以设置标签组、线程、Sticky标记。<br/>
+ * 1、发送普通消息可以使用post()方法。
+ * 2、发送Sticky消息使用postSticky()方法，注意Sticky消息在第一次接收后，就会销毁。
+ * 和发送普通消息相比，发送Sticky消息，实际上就是延迟了接收消息的时间，用于替代startActivity传数据。<br/>
+ * 2、接收消息使用{@link RxBusSubscribe}注解一个方法，其中可以设置Activity、Fragment、标签组、请求码、线程、Sticky标记。<br/>
+ * 3、Activity、Fragment是用来控制RxBus的生命周期。<br/>
  *
  * @author like
  * @version 1.0
  * @created at 2017/4/4 19:32
  */
 public class RxBus {
+    public static String TAG = "RxBus";
 
     /**
-     * 注册宿主如果父类中已经注册，那么子类中可以不用注册了
+     * 注册宿主如果父类中已经注册，那么子类中可以不用注册了，注册了也无效。
      *
      * @param host 宿主
      */
@@ -35,19 +34,6 @@ public class RxBus {
         if (!RxBusEventManager.getInstance().isRegisteredHost(host)) {// 避免重复注册某个宿主
             new RxBusProxy().init(host);
         }
-    }
-
-    /**
-     * 订阅事件
-     *
-     * @param host             宿主，通常用this
-     * @param scheduler        线程
-     * @param tag              事件的标签
-     * @param receivedListener 接收消息的监听器
-     */
-    static <T> void subscribe(@NonNull Object host, @NonNull String tag, Scheduler scheduler, boolean isSticky, OnReceivedListener<T> receivedListener) {
-        RxBusEvent<T> event = new RxBusEvent<>(host, tag, scheduler, isSticky, receivedListener);
-        RxBusEventManager.getInstance().subscribe(event);
     }
 
     /**
@@ -60,64 +46,42 @@ public class RxBus {
     }
 
     /**
-     * 在主界面退出时调用
-     */
-    public static void clear() {
-        RxBusEventManager.getInstance().clear();
-    }
-
-    /**
-     * 发送消息，采用{@link RxBusSubscribe#DEFAULT_TAG}
-     */
-    public static void post() {
-        RxBusEventManager.getInstance().post(RxBusSubscribe.DEFAULT_TAG);
-    }
-
-    /**
-     * 发送消息，采用{@link RxBusSubscribe#DEFAULT_TAG}
+     * 订阅事件
      *
-     * @param content
+     * @param host             宿主，通常用this
+     * @param scheduler        线程
+     * @param tag              事件的标签
+     * @param receivedListener 接收消息的监听器
      */
-    public static <T> void post(T content) {
-        RxBusEventManager.getInstance().post(RxBusSubscribe.DEFAULT_TAG, content);
+    static <T> void subscribe(@NonNull Object host, @NonNull String activityOrFragment, @NonNull String code, @NonNull String tag, Scheduler scheduler, boolean isSticky, OnReceivedListener<T> receivedListener) {
+        RxBusEvent<T> event = new RxBusEvent<>(host, activityOrFragment, code, tag, scheduler, isSticky, receivedListener);
+        RxBusEventManager.getInstance().subscribe(event);
     }
 
-    /**
-     * 发送消息
-     *
-     * @param tag
-     * @param content
-     */
+    public static <T> void post(@NonNull String tag) {
+        RxBusEventManager.getInstance().post(tag);
+    }
+
     public static <T> void post(@NonNull String tag, T content) {
         RxBusEventManager.getInstance().post(tag, content);
     }
 
-    /**
-     * 发送消息
-     *
-     * @param tag
-     */
-    public static void postByTag(@NonNull String tag) {
-        RxBusEventManager.getInstance().post(tag);
-    }
-
-    /**
-     * 发送Sticky消息，采用{@link RxBusSubscribe#DEFAULT_TAG}
-     *
-     * @param content
-     */
-    public static <T> void postSticky(T content) {
-        RxBusEventManager.getInstance().postSticky(RxBusSubscribe.DEFAULT_TAG, content);
+    public static <T> void post(@NonNull String tag, @NonNull String code, T content) {
+        RxBusEventManager.getInstance().post(tag, code, content);
     }
 
     /**
      * 发送Sticky消息
-     *
-     * @param tag
-     * @param content
      */
     public static <T> void postSticky(@NonNull String tag, T content) {
         RxBusEventManager.getInstance().postSticky(tag, content);
+    }
+
+    /**
+     * 发送Sticky消息
+     */
+    public static <T> void postSticky(@NonNull String tag, @NonNull String code, T content) {
+        RxBusEventManager.getInstance().postSticky(tag, code, content);
     }
 
     /**
