@@ -55,7 +55,7 @@ public class RxBusProxy<T> {
             try {
                 proxyClass = Class.forName(clazz.getName() + "$$Proxy");
             } catch (Exception e) {
-                e.printStackTrace();
+                // e.printStackTrace();
             }
             // 初始化
             if (proxyClass != null) {
