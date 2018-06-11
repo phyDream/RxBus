@@ -4,9 +4,9 @@ RxBus工具类。
 
 1、该项目基于[RxJava2](https://github.com/ReactiveX/RxJava) & [RxAndroid](https://github.com/ReactiveX/RxAndroid)。
 
-2、通过`@RxBusSubscribe`注解方法来接收消息，其中可以设置标签组、线程（默认接收消息在主线程）、Sticky标记。
+2、通过`@RxBusSubscribe`注解方法来接收消息，其中可以设置标签组、请求码、线程（默认接收消息在主线程）、Sticky标记。并且注解的方法中的参数类型必须和发送的消息类型一致，否则接收不到。
 
-3、可以发送普通消息和Sticky消息。
+3、可以发送普通消息和Sticky消息，Sticky消息在接收到后，就会销毁。
 
 4、自动防重复注册宿主（这里指任何一个类）、自动防重复注册标签（及同一个宿主下的标签不重复，如果重复了，只有第一次有效。）。
 
@@ -28,9 +28,9 @@ RxBus工具类。
 在Module的gradle中加入：
 ```groovy
     dependencies {
-        compile 'com.github.like5188:RxBus:2.0.1'
-        annotationProcessor 'com.github.like5188.RxBus:rxbus-compiler:2.0.1' // java
-        // kapt 'com.github.like5188.RxBus:rxbus-compiler:2.0.1' // kotlin
+        compile 'com.github.like5188:RxBus:版本号'
+        annotationProcessor 'com.github.like5188.RxBus:rxbus-compiler:版本号' // java
+        // kapt 'com.github.like5188.RxBus:rxbus-compiler:版本号' // kotlin
     }
 ```
 
@@ -44,62 +44,35 @@ RxBus工具类。
     RxBus.unregister(this);
 ```
 
-4、发送普通消息可以使用`post()、postByTag()`方法。
+4、发送普通消息可以使用`post()`方法。
 ```java
-    RxBus.post();
-    RxBus.post(object);
-    RxBus.post("tag", object);
-    RxBus.postByTag("tag");
+    RxBus.post(tag);
+    RxBus.post(tag, content);
+    RxBus.post(tag, code, content);
 ```
 
-5、发送Sticky消息使用`postSticky()`方法，注意Sticky消息在第一次接收后，就和普通消息一样了。和发送普通消息相比，实际上就是延迟了第一次接收消息的时间（用来替代Intent传递数据）。
+5、发送Sticky消息使用`postSticky()`方法，注意Sticky消息在第一次接收后，就会销毁。和发送普通消息相比，实际上就是延迟了第一次接收消息的时间（用来替代Intent传递数据）。
 ```java
-    RxBus.postSticky(object);
-    RxBus.postSticky("tag", object);
+    RxBus.postSticky(tag, content);
+    RxBus.postSticky(tag, code, content);
 ```
 
-6、接收消息和发送消息是一一对应的。使用`@RxBusSubscribe`注解一个方法，被注解的方法的参数最多只能是1个。只能被public修饰，且不能被static修饰(即只能使用public void修饰)。其中可以设置标签组、线程(`RxBusThread`)、Sticky标记。
+6、接收消息和发送消息是一一对应的。使用`@RxBusSubscribe`注解一个方法，被注解的方法的参数最多只能是1个。只能被public修饰，且不能被static修饰(即只能使用public void修饰)。其中可以设置标签组、请求码、线程(`RxBusThread`)、Sticky标记。
 ```java
-    默认标签，无参
-    
     发送消息：
-    RxBus.post();
-    
-    接收消息：
-    @RxBusSubscribe()
-    public void test() {
-    }
-    
-    // kotlin
-    @RxBusSubscribe()
-    fun test() {
-    }
-```
-```java
-    默认标签，有参
-    
-    发送消息：
-    RxBus.post(123);
-    
-    接收消息：
-    @RxBusSubscribe()
-    public void test(int data) {
-    }
-```
-```java
-    自定义标签，无参
-    
-    发送消息：
-    RxBus.postByTag("tag");
+    RxBus.post("tag");
     
     接收消息：
     @RxBusSubscribe("tag")
     public void test() {
     }
+    
+   // kotlin
+   @RxBusSubscribe("tag")
+    fun test() {
+    }
 ```
 ```java
-    自定义标签，有参
-    
     发送消息：
     RxBus.post("tag", 123);
     
@@ -109,8 +82,15 @@ RxBus工具类。
     }
 ```
 ```java
-    自定义标签数组，有参
+    发送消息：
+    RxBus.post("tag", "code", 2.3);
     
+    接收消息：
+    @RxBusSubscribe(value = "tag", code = "code")
+    public void test(double data) {
+    }
+```
+```java
     发送消息：
     RxBus.post("tag1", "1");
     RxBus.post("tag2", "2");
@@ -121,25 +101,21 @@ RxBus工具类。
     }
 ```
 ```java
-    自定义标签，有参
-    
     发送Sticky消息：
     RxBus.postSticky("tag", "1");
     
     接收Sticky消息：
-    @RxBusSubscribe(value = "tag", isSticky = true, thread = RxBusThread.IO)
+    @RxBusSubscribe(value = "tag", isSticky = true)
     public void test(String data) {
     }
 ```
 ```java
-    默认标签，有参
-    
     发送Sticky消息：
-    RxBus.postSticky("1");
+    RxBus.postSticky("tag", "code", 1);
     
     接收Sticky消息：
-    @RxBusSubscribe(isSticky = true)
-    public void test(String data) {
+    @RxBusSubscribe(value = "tag", code = "code", isSticky = true)
+    public void test(int data) {
     }
 ```
 # License

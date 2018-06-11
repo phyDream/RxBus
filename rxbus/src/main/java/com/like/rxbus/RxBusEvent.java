@@ -29,16 +29,14 @@ class RxBusEvent<T> {
     private Object host;
     private String tag;
     private String code;
-    private String activityOrFragment;
     private Scheduler scheduler;
     private Disposable disposable;
     private RxBus.OnReceivedListener<T> receivedListener;
     private Subject<RxBusContent<T>> subject;
     private boolean isSticky;
 
-    public RxBusEvent(@NonNull Object host, @NonNull String activityOrFragment, @NonNull String code, @NonNull String tag, @NonNull Scheduler scheduler, boolean isSticky, RxBus.OnReceivedListener<T> receivedListener) {
+    public RxBusEvent(@NonNull Object host, @NonNull String code, @NonNull String tag, @NonNull Scheduler scheduler, boolean isSticky, RxBus.OnReceivedListener<T> receivedListener) {
         this.host = host;
-        this.activityOrFragment = activityOrFragment;
         this.tag = tag;
         this.code = code;
         this.scheduler = scheduler;
@@ -60,9 +58,6 @@ class RxBusEvent<T> {
             disposable = null;
             return false;
         }
-//        observable.compose(RxSchedulers.observableIo2Main<T>())
-//                .compose(RxSchedulers.destroy<T>(host))
-//                .subscribe(observer)
 
         final RxBusEvent event = this;
         disposable = subject.observeOn(scheduler).toFlowable(BackpressureStrategy.DROP).subscribe(new Consumer<RxBusContent<T>>() {
@@ -115,10 +110,6 @@ class RxBusEvent<T> {
 
     public String getCode() {
         return code;
-    }
-
-    public String getActivityOrFragment() {
-        return activityOrFragment;
     }
 
     public Subject<RxBusContent<T>> getSubject() {

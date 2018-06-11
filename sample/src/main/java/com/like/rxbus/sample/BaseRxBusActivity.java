@@ -20,7 +20,7 @@ public class BaseRxBusActivity extends AppCompatActivity {
         RxBus.unregister(this);
     }
 
-    @RxBusSubscribe(tags = "BaseRxBusActivity")
+    @RxBusSubscribe("BaseRxBusActivity")
     public void test() {
         RxBusMessageUtils.handleMessage(this, "");
     }

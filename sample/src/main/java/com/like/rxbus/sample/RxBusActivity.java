@@ -24,7 +24,7 @@ public class RxBusActivity extends BaseRxBusActivity {
 
     public void clickSticky(View view) {
         RxBus.postSticky("RxBusStickyActivity1", 111);
-        RxBus.postSticky("RxBusStickyActivity2", "3", 222.99);
+        RxBus.postSticky("RxBusStickyActivity2", "2", 222.99);
         startActivity(new Intent(this, RxBusStickyActivity.class));
     }
 
@@ -33,12 +33,12 @@ public class RxBusActivity extends BaseRxBusActivity {
 //        startActivity(new Intent(this, StickyActivity.class));
     }
 
-    @RxBusSubscribe(tags = {"RxBusActivity1", "RxBusActivity2"}, code = "1", thread = RxBusThread.IO)
+    @RxBusSubscribe(value = {"RxBusActivity1", "RxBusActivity2"}, code = "1", thread = RxBusThread.IO)
     public void test(String data) {
         RxBusMessageUtils.handleMessage(this, data);
     }
 
-    @RxBusSubscribe(tags = "RxBusActivity3")
+    @RxBusSubscribe("RxBusActivity3")
     public void test(Integer data) {
         RxBusMessageUtils.handleMessage(this, data);
     }

@@ -4,11 +4,6 @@ import android.support.annotation.NonNull;
 
 import com.like.logger.Logger;
 import com.like.rxbus.annotations.RxBusSubscribe;
-import com.trello.rxlifecycle2.LifecycleTransformer;
-import com.trello.rxlifecycle2.android.ActivityEvent;
-import com.trello.rxlifecycle2.android.FragmentEvent;
-import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
-import com.trello.rxlifecycle2.components.support.RxFragment;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -184,15 +179,4 @@ class RxBusEventManager<T> {
         return set.size();
     }
 
-//    /**
-//     * 绑定onDestroy()方法
-//     */
-//    public LifecycleTransformer<T> bindDestroyEvent() {
-//        if (host instanceof RxAppCompatActivity) {
-//            return ((RxAppCompatActivity) host).bindUntilEvent(ActivityEvent.DESTROY);
-//        } else if (host instanceof RxFragment) {
-//            return ((RxFragment) host).bindUntilEvent(FragmentEvent.DESTROY);
-//        }
-//        return null;
-//    }
 }

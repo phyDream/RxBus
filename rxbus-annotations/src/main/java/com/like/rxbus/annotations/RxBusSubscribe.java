@@ -20,20 +20,14 @@ import java.lang.annotation.Target;
 public @interface RxBusSubscribe {
     String DEFAULT_TAG = "com.like.rxbus.annotations.RxBusSubscribe";
     String DEFAULT_CODE = "";
-    String DEFAULT_ACTIVITY_OR_FRAGMENT = "";
-
-    /**
-     * 订阅类所在的Activity或者Fragment的全名。用于控制生命周期
-     */
-    String activityOrFragment() default DEFAULT_ACTIVITY_OR_FRAGMENT;
 
     /**
      * 标签数组
      */
-    String[] tags() default {DEFAULT_TAG};
+    String[] value() default {DEFAULT_TAG};
 
     /**
-     * 事件的参数，类似于requestCode
+     * 事件的参数，类似于请求码requestCode
      */
     String code() default DEFAULT_CODE;
 

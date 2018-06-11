@@ -13,7 +13,6 @@ final class MethodInfo {
     private Set<String> tags;
     private RxBusThread thread;
     private boolean isSticky;
-    private String activityOrFragment;
     private String code;
     private TypeMirror paramType;
 
@@ -35,10 +34,6 @@ final class MethodInfo {
 
     public boolean isSticky() {
         return isSticky;
-    }
-
-    public String getActivityOrFragment() {
-        return activityOrFragment;
     }
 
     public String getCode() {
@@ -65,10 +60,6 @@ final class MethodInfo {
         isSticky = sticky;
     }
 
-    public void setActivityOrFragment(String activityOrFragment) {
-        this.activityOrFragment = activityOrFragment;
-    }
-
     public void setCode(String code) {
         this.code = code;
     }
@@ -84,7 +75,6 @@ final class MethodInfo {
                 ", tags=" + tags +
                 ", thread=" + thread +
                 ", isSticky=" + isSticky +
-                ", activityOrFragment=" + activityOrFragment +
                 ", code='" + code + '\'' +
                 ", paramType=" + paramType +
                 '}';

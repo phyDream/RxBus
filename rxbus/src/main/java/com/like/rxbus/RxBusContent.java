@@ -25,17 +25,17 @@ public class RxBusContent<T> {
         this.content = null;
     }
 
+    public RxBusContent(T content) {
+        contentType = ContentType.HAS_DATA;
+        this.content = content;
+    }
+
     public ContentType getContentType() {
         return contentType;
     }
 
     public void setContentType(ContentType contentType) {
         this.contentType = contentType;
-    }
-
-    public RxBusContent(T content) {
-        contentType = ContentType.HAS_DATA;
-        this.content = content;
     }
 
     public T getContent() {

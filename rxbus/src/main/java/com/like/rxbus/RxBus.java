@@ -15,8 +15,7 @@ import io.reactivex.Scheduler;
  * 1、发送普通消息可以使用post()方法。
  * 2、发送Sticky消息使用postSticky()方法，注意Sticky消息在第一次接收后，就会销毁。
  * 和发送普通消息相比，发送Sticky消息，实际上就是延迟了接收消息的时间，用于替代startActivity传数据。<br/>
- * 2、接收消息使用{@link RxBusSubscribe}注解一个方法，其中可以设置Activity、Fragment、标签组、请求码、线程、Sticky标记。<br/>
- * 3、Activity、Fragment是用来控制RxBus的生命周期。<br/>
+ * 3、接收消息使用{@link RxBusSubscribe}注解一个方法，其中可以设置标签组、请求码、线程、Sticky标记。<br/>
  *
  * @author like
  * @version 1.0
@@ -53,8 +52,8 @@ public class RxBus {
      * @param tag              事件的标签
      * @param receivedListener 接收消息的监听器
      */
-    static <T> void subscribe(@NonNull Object host, @NonNull String activityOrFragment, @NonNull String code, @NonNull String tag, Scheduler scheduler, boolean isSticky, OnReceivedListener<T> receivedListener) {
-        RxBusEvent<T> event = new RxBusEvent<>(host, activityOrFragment, code, tag, scheduler, isSticky, receivedListener);
+    static <T> void subscribe(@NonNull Object host, @NonNull String code, @NonNull String tag, Scheduler scheduler, boolean isSticky, OnReceivedListener<T> receivedListener) {
+        RxBusEvent<T> event = new RxBusEvent<>(host, code, tag, scheduler, isSticky, receivedListener);
         RxBusEventManager.getInstance().subscribe(event);
     }
 

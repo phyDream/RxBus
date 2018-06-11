@@ -95,13 +95,12 @@ public class ClassCodeGenerator {
         CodeBlock.Builder builder = CodeBlock.builder();
         Set<String> tags = methodInfo.getTags();
         for (String tag : tags) {
-            String activityOrFragment = methodInfo.getActivityOrFragment();
             String code = methodInfo.getCode();
             ClassName thread = getRxThreadClassName(methodInfo.getThread());
             boolean isSticky = methodInfo.isSticky();
 
             CodeBlock.Builder b = CodeBlock.builder();
-            b.addStatement("subscribe(host\n,$S\n,$S\n,$S\n,$T()\n,$L\n,$L)", activityOrFragment, code, tag, thread, isSticky, createListenerParam(methodInfo));
+            b.addStatement("subscribe(host\n,$S\n,$S\n,$T()\n,$L\n,$L)", code, tag, thread, isSticky, createListenerParam(methodInfo));
             builder.add(b.build());
         }
         return builder.build();
@@ -151,9 +150,8 @@ public class ClassCodeGenerator {
         MethodInfo methodInfo = new MethodInfo();
         methodInfo.setMethodName(element.getSimpleName().toString());
 
-        methodInfo.setTags(element.getAnnotation(RxBusSubscribe.class).tags());
+        methodInfo.setTags(element.getAnnotation(RxBusSubscribe.class).value());
         methodInfo.setSticky(element.getAnnotation(RxBusSubscribe.class).isSticky());
-        methodInfo.setActivityOrFragment(element.getAnnotation(RxBusSubscribe.class).activityOrFragment());
         methodInfo.setCode(element.getAnnotation(RxBusSubscribe.class).code());
         methodInfo.setThread(element.getAnnotation(RxBusSubscribe.class).thread());
 
