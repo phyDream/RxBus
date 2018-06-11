@@ -1,7 +1,9 @@
 # rxbus
 
 RxBus工具类。
-
+ 
+与2.0.1版本的区别：RxBusSubscribe注解中增加了一个参数：code（请求码）。改变了Sticky消息的处理逻辑为接收到消息就自动销毁。去掉了postByTag()方法。 
+ 
 1、该项目基于[RxJava2](https://github.com/ReactiveX/RxJava) & [RxAndroid](https://github.com/ReactiveX/RxAndroid)。
 
 2、通过`@RxBusSubscribe`注解方法来接收消息，其中可以设置标签组、请求码、线程（默认接收消息在主线程）、Sticky标记。并且注解的方法中的参数类型必须和发送的消息类型一致，否则接收不到。
