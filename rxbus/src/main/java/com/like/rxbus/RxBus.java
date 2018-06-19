@@ -57,7 +57,7 @@ public class RxBus {
         RxBusEventManager.getInstance().subscribe(event);
     }
 
-    public static <T> void post(@NonNull String tag) {
+    public static void post(@NonNull String tag) {
         RxBusEventManager.getInstance().post(tag);
     }
 
